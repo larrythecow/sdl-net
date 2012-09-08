@@ -10,8 +10,6 @@
 #define DIMBUFFER 1024
 #define DIMCLIENT 16
 
-
-
 class Net {
 private:
     bool running;
@@ -19,10 +17,10 @@ private:
 
     TCPsocket socket;
     TCPsocket socketPeer;
-//    TCPsocket socketClient;
+    //    TCPsocket socketClient;
     SDLNet_SocketSet socketsetClient;
     Ip ipPeer;
-    
+
     char buffer[DIMBUFFER];
     int clientCount;
 
@@ -35,20 +33,16 @@ public:
     int serverExecute();
     void cleanup();
     void logic();
-    
-    void tcpSend();
-    void tcpOpen();
-    void tcpGetPeerAddress();
-    int tcpAccept();
-    ///
-    
-//    void setSocket();
-//    void setIpDest();
-//    void setBuffer(char *);
-//    void setHost();
 
-    
-    
+    TCPsocket tcpOpen();
+    TCPsocket tcpOpen(IPaddress *);
+    int tcpSend();
+    int tcpSend(TCPsocket socket, const void *);
+    int tcpSend(TCPsocket socket, const void *, int len);
+    IPaddress * tcpGetPeerAddress();
+    IPaddress * tcpGetPeerAddress(TCPsocket socket);
+
+    TCPsocket tcpAccept(TCPsocket);    TCPsocket tcpAccept();
 };
 
 #endif

@@ -10,6 +10,7 @@ Net::~Net() {
 }
 
 int Net::serverExecute() {
+    int i=0;
     printf("init done!\n");
     int quit = 0;
 
@@ -27,8 +28,8 @@ int Net::serverExecute() {
                 if ((SDLNet_TCP_Recv(socketPeer, buffer, DIMBUFFER) > 0)) {
                     fprintf(stdout, "reci: %s\n", buffer);
                     //fprintf(stdout, "send: %s", buffer);
-                    snprintf(buffer, DIMBUFFER, "answer.....\n");
-                    tcpSend();
+                    snprintf(buffer, DIMBUFFER, "answer %d\n", i);
+                    tcpSend(socketPeer, buffer);
                 }
                 //                if ((strcmp(buffer, "exit") == 0)) {
                 //                    fprintf(stdout, "session terminated\n");
@@ -40,6 +41,7 @@ int Net::serverExecute() {
                 //                    quit = 1;
                 //                }
                 //                SDL_Delay(100);
+                i++;
             }
         }
         SDL_Delay(100);

@@ -10,6 +10,8 @@ Net::~Net() {
 }
 
 int Net::clientExecute() {
+    int i = 0;
+    int quit = 0;
     printf("init done!\n");
 
 
@@ -17,9 +19,33 @@ int Net::clientExecute() {
     tcpOpen();
     ipPeer.resolveIP();
     while (1) {
-        snprintf(buffer, DIMBUFFER, "%s", "hello world\n");
-        tcpSend();
+
+        SDL_Delay(1000);
+        i++;
     }
+
+    printf("main loop\n");
+    while (running) {
+
+
+        if (tcpAccept()) {
+            snprintf(buffer, DIMBUFFER, "%s %d\n", "hello world", i);
+            tcpSend();
+            tcpGetPeerAddress();
+            quit = 0;
+//            while (!quit) {
+//                if ((SDLNet_TCP_Recv(socketPeer, buffer, DIMBUFFER) > 0)) {
+//                    fprintf(stdout, "reci: %s\n", buffer);
+//                    snprintf(buffer, DIMBUFFER, "answer %d\n", i);
+//                    tcpSend(socketPeer, buffer);
+//                }
+//                i++;
+//            }
+        }
+        SDL_Delay(1000);
+    }
+
+
 
     printf("\n\ncleanexit\n\n");
     return 0;

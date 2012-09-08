@@ -14,8 +14,12 @@ public:
     ~Ip();
 
     IPaddress * getip();
-    int resolvehost(const char *, Uint16);
+    const char * getip(IPaddress *);
+
+    int resolvehost(IPaddress * ip, const char * host, Uint16 port);
+    int resolvehost(const char * host, Uint16 port);
     const char * resolveIP();
+    const char * resolveIP(IPaddress *ip);
 
 };
 

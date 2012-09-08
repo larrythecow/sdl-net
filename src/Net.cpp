@@ -1,42 +1,62 @@
 #include "Net.h"
 
-void Net::tcpOpen() {
-    if (((socket = SDLNet_TCP_Open(ipPeer.getip())) == NULL)) {
+TCPsocket Net::tcpOpen() {
+    return tcpOpen(ipPeer.getip());
+}
+
+TCPsocket Net::tcpOpen(IPaddress * ip) {
+    if (((socket = SDLNet_TCP_Open(ip)) == NULL)) {
         printf("tcpOpen:\t\tfail\t%s\n", SDLNet_GetError());
         exit(-1);
     }
     printf("tcpOpen:\t\tOK\t\n");
+    return socket;
 }
 
-void Net::tcpSend() {
-    int len, result;
+int Net::tcpSend() {
+    return tcpSend(socket, buffer);
+}
 
-    len = strlen(buffer) + 1; // add one for the terminating NULL
-    result = SDLNet_TCP_Send(socket, buffer, len);
-    if (result < len) {
+int Net::tcpSend(TCPsocket socket, const void *buffer) {
+    return tcpSend(socket, buffer, (strlen((const char *) buffer) + 1));
+}
+
+int Net::tcpSend(TCPsocket socket, const void * buffer, int len) {
+    int res;
+    if ((res = SDLNet_TCP_Send(socket, buffer, len)) < len) {
         printf("tcpSend:\t\tfail\t%s\n", SDLNet_GetError());
     }
+    return res;
 }
 
-void Net::tcpGetPeerAddress() {
-    IPaddress *remote_ip;
+IPaddress * Net::tcpGetPeerAddress() {
+    //ip = tcpGetPeerAddress(socketPeer);
+    return tcpGetPeerAddress(socketPeer);
+}
 
-    remote_ip = SDLNet_TCP_GetPeerAddress(socket);
-    if (!remote_ip) {
+IPaddress * Net::tcpGetPeerAddress(TCPsocket socket) {
+    IPaddress *ip;
+
+    if (((ip = SDLNet_TCP_GetPeerAddress(socket)) == NULL)) {
         printf("tcpGetPeerAddress:\tfailed\t%s\n", SDLNet_GetError());
     } else {
-        printf("tcpGetPeerAddress:\tOK\n");
+
+        printf("tcpGetPeerAddress:\tOK\t\tOK\t%x:%x\n", (Uint32) ip->host, (Uint16) ip->port);
     }
+    return ip;
 }
 
-int Net::tcpAccept() {
-//    TCPsocket new_tcpsock;
+TCPsocket Net::tcpAccept() {
 
+    return tcpAccept(socket);
+}
+
+TCPsocket Net::tcpAccept(TCPsocket socket) {
     socketPeer = SDLNet_TCP_Accept(socket);
     if (!socketPeer) {
         //printf("tcpAccept:\t\tfailed\t%s\n", SDLNet_GetError());
-        return 0;
+        return NULL;
     }
     printf("tcpAccept:\t\tOK\n");
-    return 1;
+    return socketPeer;
 }
