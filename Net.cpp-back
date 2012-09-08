@@ -1,0 +1,119 @@
+#include "Net.h"
+
+void Net::setSocket() {
+}
+
+void Net::setIpDest() {
+}
+
+void Net::setBuffer(char *buffer) {
+    char tmp[7];
+    snprintf(tmp, 7, "%%%ds", DIMBUFFER);
+    snprintf(this->buffer, 1024, "%s", buffer);
+}
+
+void Net::setHost() {
+}
+
+TCPsocket Net::getSocket() {
+    return socket;
+}
+
+IPaddress Net::getIpRem() {
+    return ipRem;
+}
+
+char * Net::getBuffer() {
+    return buffer;
+}
+
+const char * Net::getHost() {
+    return host;
+}
+
+void Net::resolveHost(IPaddress *ip, const char *host, Uint16 port) {
+    if (SDLNet_ResolveHost(ip, host, port) < 0) {
+        fprintf(stderr, "resolveHost:\t\tfailed %s\n", SDLNet_GetError());
+        exit(-3);
+    } else
+        fprintf(stdout, "resolveHost:\t\tOK\n");
+}
+
+const char * Net::resolveIP(IPaddress *ip, const char * host) {
+    if (!(host = SDLNet_ResolveIP(ip))) {
+        printf("resolveIP:\t\tfailed %s %s\n", host, SDLNet_GetError());
+    } else
+        printf("resolveIP:\t\tOK %s\n", host);
+    return host;
+}
+
+TCPsocket Net::tcpOpen(IPaddress *ip) {
+    TCPsocket socket;
+    if (!(socket = SDLNet_TCP_Open(ip))) {
+        fprintf(stderr, "tcpOpen:\t\tfailed %s\n", SDLNet_GetError());
+        exit(-3);
+    } else
+        fprintf(stdout, "tcpOpen:\t\tOK\n");
+    return socket;
+}
+
+void Net::tcpSend(TCPsocket socket, const void *msg, int len) {
+    if (((SDLNet_TCP_Send(socket, msg, len)) < len)) {
+        printf("tcpSend:\t\tfailed %s\n", SDLNet_GetError());
+    } else
+        printf("tcpSend:\t\tOK %s\n", (char *) msg);
+}
+
+void Net::netSetipdest(IPaddress ipDest) {
+    this->ipRem = ipRem;
+}
+
+void Net::netSetipdest(const char *host, int port) {
+    resolveHost(ipRem, host, port);
+    this->host = resolveIP(ipRem, this->host);
+}
+
+void Net::netSetipLoc(const char *host, int port) {
+    resolveHost(ipLoc, host, port);
+    this->host = resolveIP(ipLoc, this->host);
+}
+
+void Net::netSetSocket(TCPsocket socket) {
+    this->socket = socket;
+}
+
+void Net::netTcpOpenLoc() {
+    //    if (!(socket = SDLNet_TCP_Open(&ipDest))) {
+    socket = tcpOpen(ipLoc);
+}
+
+void Net::netTcpOpenRem() {
+    if (!(socket = SDLNet_TCP_Open(&ipRem))) {
+        socket = tcpOpen(&ipRem);
+    }
+}
+
+int Net::netTcpSend() {
+    if (((SDLNet_TCP_Send(socket, buffer, (strlen(buffer) + 1)) < (signed)strlen(buffer)))) {
+        printf("netTCPSend:\t\tfailed %s\n", SDLNet_GetError());
+        return -1;
+    }
+    //printf("tcpSend:\t\tOK %s\n", (char *) buffer);
+    return 1;
+}
+
+int Net::netTcpAccept() {
+    socketClient = SDLNet_TCP_Accept(socket);
+    if (socketClient) {
+        printf("netTcpAccept:\t\tfailed %s\n", SDLNet_GetError());
+    } else {
+        printf("netTcpAccept:\t\tOK\n");
+    }
+    return 1;
+}
+
+void Net::netTcpSetPeerAddress() {
+    if (!(ipPeer = SDLNet_TCP_GetPeerAddress(socketClient))) {
+        fprintf(stderr, "netTcpSetPeerAddress\t\tfailed %s\n", SDLNet_GetError());
+    }
+}
