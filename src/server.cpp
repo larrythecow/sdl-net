@@ -26,10 +26,10 @@ int Net::serverExecute() {
             quit = 0;
             while (!quit) {
                 if ((SDLNet_TCP_Recv(socketPeer, buffer, DIMBUFFER) > 0)) {
-                    fprintf(stdout, "reci: %s\n", buffer);
-                    //fprintf(stdout, "send: %s", buffer);
-                    snprintf(buffer, DIMBUFFER, "answer %d\n", i);
+                    fprintf(stdout, "reci:\t%s", buffer);
+                    snprintf(buffer, DIMBUFFER, "server123\t%d\n", i);
                     tcpSend(socketPeer, buffer);
+                    fprintf(stdout, "send:\t%s", buffer);
                 }
                 //                if ((strcmp(buffer, "exit") == 0)) {
                 //                    fprintf(stdout, "session terminated\n");

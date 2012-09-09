@@ -3,7 +3,7 @@
 void Net::cleanup() {
     
 //    SDLNet_TCP_DelSocket(socketsetClient, socketClient);
-    SDLNet_FreeSocketSet(socketsetClient);
+    SDLNet_FreeSocketSet(socketSetClient);
     printf("\n\ncleanexit\n");
     SDLNet_Quit();
 }

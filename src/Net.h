@@ -9,6 +9,7 @@
 
 #define DIMBUFFER 1024
 #define DIMCLIENT 16
+#define TIMEOUT 1000;
 
 class Net {
 private:
@@ -17,8 +18,7 @@ private:
 
     TCPsocket socket;
     TCPsocket socketPeer;
-    //    TCPsocket socketClient;
-    SDLNet_SocketSet socketsetClient;
+    SDLNet_SocketSet socketSetClient;
     Ip ipPeer;
 
     char buffer[DIMBUFFER];
@@ -42,7 +42,16 @@ public:
     IPaddress * tcpGetPeerAddress();
     IPaddress * tcpGetPeerAddress(TCPsocket socket);
 
-    TCPsocket tcpAccept(TCPsocket);    TCPsocket tcpAccept();
+    TCPsocket tcpAccept();
+    TCPsocket tcpAccept(TCPsocket);
+    
+    SDLNet_SocketSet allocSocketSet();
+    SDLNet_SocketSet allocSocketSet(int maxSockets);
+    int addSocket();
+    int addSocket(SDLNet_SocketSet, TCPsocket);
+    int checkSockets(Uint32 timeout);
+    int checkSockets(SDLNet_SocketSet set, Uint32 timeout);
+    
 };
 
 #endif
